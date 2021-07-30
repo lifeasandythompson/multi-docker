@@ -1,0 +1,41 @@
+language: generic
+
+sudo: required
+services:
+  - docker
+
+# Initial image
+before_install:
+  - docker build -t lifeasandythompson/react-test -f ./client/Dockerfile.dev ./client
+
+# Tests scripts to run on the image
+script:
+  - docker run -e CI=true lifeasandythompson/react-test npm test 
+
+# Add in configurations that will build production versions of our projects
+after_success:
+  - docker build -t lifeasandythompson/multi-client ./client
+  - docker build -t lifeasandythompson/multi-nginx ./nginx
+  - docker build -t lifeasandythompson/multi-server ./server
+  - docker build -t lifeasandythompson/multi-worker ./worker
+  # Login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push to docker hub
+  - docker push lifeasandythompson/multi-client
+  - docker push lifeasandythompson/multi-nginx
+  - docker push lifeasandythompson/multi-server
+  - docker push lifeasandythompson/multi-worker
+
+
+# Deploy to AWS
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "docker-react"
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-us-east-2-914005136749"
+  bucket_path: "docker-react"
+  on:
+    branch: master
+  access_key_id: $access_key_id
+  secret_access_key: $secret_access_key
