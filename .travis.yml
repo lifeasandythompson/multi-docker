@@ -14,14 +14,14 @@ script:
 
 # Add in configurations that will build production versions of our projects
 after_success:
-  - docker build -t lifeasandythompson/multi-client ./client
-  - docker build -t lifeasandythompson/multi-nginx ./nginx
-  - docker build -t lifeasandythompson/multi-server ./server
-  - docker build -t lifeasandythompson/multi-worker ./worker
+  - docker build -t n582346/multi-client ./client
+  - docker build -t n582346/multi-nginx ./nginx
+  - docker build -t n582346/multi-server ./server
+  - docker build -t n582346/multi-worker ./worker
   # Login to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take images and push to docker hub
-  - docker push n582346/lifeasandythompson:multi-client
-  - docker push n582346/lifeasandythompson:multi-nginx
-  - docker push n582346/lifeasandythompson:multi-server
-  - docker push n582346/lifeasandythompson:multi-worker
+  - docker push n582346/multi-client
+  - docker push n582346/multi-nginx
+  - docker push n582346/multi-server
+  - docker push n582346/multi-worker
